@@ -26,6 +26,9 @@ function getMetaData(sample){
         // filter data for Object with selected number
 
         var selectElement = d3.select("#selDataset")
+            selectElement.html("") 
+
+        selectElement = d3.select("#selDataset")
             .append('select')
             .attr('class', 'select')
             .on('change', optionChanged)
@@ -35,7 +38,7 @@ function getMetaData(sample){
             filteredData = metadata.filter(x => x.id == this.value)
             console.log(filteredData)
             renderData(filteredData[0]);
-            
+            renderCharts(filteredData[0]);
         };
 
         
@@ -46,24 +49,31 @@ function getMetaData(sample){
         .append("option").text(function(d) {return d.id;});
   
         console.log(options);
+        renderData(filteredData[0]);
+        renderCharts(filteredData[0]);
+        
     });
+    
 };
 
 getMetaData();
 
+
 function renderCharts(obj){
     d3.json("data/samples.json").then((sample_data) => {
-        // console.log(sample_data)
-        var sampleIds = sample_data.samples[0].otu_ids;
+        var filterSamples = sample_data.samples.filter(x => x.id == obj.id);
+        // console.log(sample_data);
+        // console.log(filterSamples);
+        var sampleIds = filterSamples[0].otu_ids;
         // console.log(sampleIds)
-        var sample_values = sample_data.samples[0].sample_values.slice(0,10).reverse();
+        var sample_values = filterSamples[0].sample_values.slice(0,10).reverse();
         // console.log(sampleValues)
-        var otu_labels = sample_data.samples[0].otu_labels.slice(0,10);
+        var otu_labels = filterSamples[0].otu_labels.slice(0,10);
         // console.log(sampleLabels)
-        var topOtu = (sample_data.samples[0].otu_ids.slice(0,10)).reverse();
+        var topOtu = (filterSamples[0].otu_ids.slice(0,10)).reverse();
         var otu_ids = topOtu.map(d => "OTU" + d);
         // console.log(`otu IDs: ${otuId}`);
-        var otu_labels = sample_data.samples[0].otu_labels.slice(0,10);
+        var otu_labels = filterSamples[0].otu_labels.slice(0,10);
         // console.log(`otu labels: ${otuLabels}`)
 
         var trace1 ={
