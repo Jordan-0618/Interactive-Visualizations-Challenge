@@ -10,6 +10,7 @@ function renderData(obj){
     Object.entries(obj).forEach(([key, value]) => {
         panel.append("h6").text(`${key}: ${value}`);
     });
+
 };
 
 // Create function to read json
@@ -34,7 +35,10 @@ function getMetaData(sample){
             filteredData = metadata.filter(x => x.id == this.value)
             console.log(filteredData)
             renderData(filteredData[0]);
+            
         };
+
+        
 
         // var selectElement = d3.select("selDataset");
         console.log(selectElement);
@@ -42,33 +46,79 @@ function getMetaData(sample){
         .append("option").text(function(d) {return d.id;});
   
         console.log(options);
-
-        // var dataArray = metadata.samples.filter(sampleObject => sampleObject.id.toString() === sample)[0];
-        // var dataArray = metadata.filter(metadata => metadata.id === );
-        // // const range = (start, end, length = end - start + 1) =>
-        // //     dataArray.from({length}, (_,i) => start + i);
-        // var result = dataArray[0];
-        // console.log(dataArray);
     });
 };
 
 getMetaData();
 
-// function createChart(sample) {
-//     d3.json("data/samples.json").then((data) => {
-//         var chartData = data.samples;
-//         console.log(chartData);
-//         console.log("hello");
-//         var resultData = chartData.filter(sampleObject => sampleObject.id == sample);
-        
-//         var results = resultData[0];
-//         console.log(results);
+function renderCharts(obj){
+    d3.json("data/samples.json").then((sample_data) => {
+        // console.log(sample_data)
+        var sampleIds = sample_data.samples[0].otu_ids;
+        // console.log(sampleIds)
+        var sample_values = sample_data.samples[0].sample_values.slice(0,10).reverse();
+        // console.log(sampleValues)
+        var otu_labels = sample_data.samples[0].otu_labels.slice(0,10);
+        // console.log(sampleLabels)
+        var topOtu = (sample_data.samples[0].otu_ids.slice(0,10)).reverse();
+        var otu_ids = topOtu.map(d => "OTU" + d);
+        // console.log(`otu IDs: ${otuId}`);
+        var otu_labels = sample_data.samples[0].otu_labels.slice(0,10);
+        // console.log(`otu labels: ${otuLabels}`)
 
-//         // console.log("hello");
+        var trace1 ={
+            x: sample_values,
+            y: otu_ids,
+            text: otu_labels,
+            marker: {
+                color: "blue"},
+                type: "bar",
+                orientation: "h"
+        };
 
-//         // var otu_ids = results.otu_ids;
-//         // var otu_labels = results.otu_labels;
-//         // var sample_values = results.sample_values;
+        var data = [trace1];
 
-//     });
-// }
+        Plotly.newPlot("bar", data);
+
+        var trace2 = {
+            x: otu_ids,
+            y: sample_values,
+            mode: "markers",
+            marker:{ 
+                size: sample_values,
+                color: otu_ids
+            },
+            text: otu_labels
+
+        };
+
+        var layout_2 = {
+            xaxis:{title: "OTU ID"},
+            height: 600,
+            width: 1200
+        };
+
+        var data2 = [trace2];
+
+        Plotly.newPlot("bubble", data2, layout_2)
+    });
+
+    // function init() {
+    //     d3.json("data/samples.json").then((data) => {
+    //         console.log(data)
+
+    //         data.names.forEach((name) => {
+    //             d3.select("#selDataset")
+    //             .append("option")
+    //             .text(name)
+    //             .property("value");
+    //         });
+    //         renderCharts(data.names[0]);
+            
+    //     })
+    // }
+    // // init();
+}
+
+
+renderCharts()    
