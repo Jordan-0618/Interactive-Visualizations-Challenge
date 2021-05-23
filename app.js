@@ -76,9 +76,14 @@ function renderCharts(obj){
                 orientation: "h"
         };
 
+        var layout_1 = {
+            title: "Top 10 OTU by Subject"
+
+        };
+
         var data = [trace1];
 
-        Plotly.newPlot("bar", data);
+        Plotly.newPlot("bar", data, layout_1);
 
         var trace2 = {
             x: otu_ids,
@@ -86,7 +91,7 @@ function renderCharts(obj){
             mode: "markers",
             marker:{ 
                 size: sample_values,
-                color: otu_ids
+                color: "pink"
             },
             text: otu_labels
 
